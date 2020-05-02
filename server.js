@@ -9,7 +9,17 @@ const db = require('./db-con');
 const app = express();
 const port = process.env.PORT || 4000;
 
+<<<<<<< HEAD
 
+=======
+const userData = {
+  userId: "789789",
+  password: "123456",
+  name: "Balakrishna vardhineni",
+  username: "bala@123",
+  isAdmin: true
+};
+>>>>>>> 2768a413327575520ee18794ccd66300f0a192e5
 
 app.use(cors());
 
