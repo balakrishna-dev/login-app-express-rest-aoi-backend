@@ -5,17 +5,11 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const utils = require('./utils');
-
+const db = require('./db-con');
 const app = express();
 const port = process.env.PORT || 4000;
 
-const userData = {
-  userId: "789789",
-  password: "123456",
-  name: "Balakrishna vardhineni",
-  username: "cluemediator",
-  isAdmin: true
-};
+
 
 app.use(cors());
 
@@ -50,6 +44,10 @@ app.get('/', (req, res) => {
 });
 
 
+
+var con = db.connection();
+var userData;
+
 app.post('/users/signin', function (req, res) {
   const user = req.body.username;
   const pwd = req.body.password;
@@ -60,8 +58,19 @@ app.post('/users/signin', function (req, res) {
       message: "Username or Password required."
     });
   }
-
+  
+  con.connect( function(err){
+  if(err) throw err;
+    console.log("connected...");
+    const query = "select * from test.users where username= ? and password = ?";
+    con.query(query,[user,pwd] ,function (err, result, fields) {
+        if (err) throw err;
+         userData = result[0];
+    });
+  }); 
+  console.log(userData.username);
   if (user !== userData.username || pwd !== userData.password) {
+    console.log(userData.username);
     return res.status(401).json({
       error: true,
       message: "Username or Password is Wrong."
