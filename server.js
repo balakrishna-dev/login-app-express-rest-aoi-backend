@@ -9,17 +9,7 @@ const db = require('./db-con');
 const app = express();
 const port = process.env.PORT || 4000;
 
-<<<<<<< HEAD
 
-=======
-const userData = {
-  userId: "789789",
-  password: "123456",
-  name: "Balakrishna vardhineni",
-  username: "bala@123",
-  isAdmin: true
-};
->>>>>>> 2768a413327575520ee18794ccd66300f0a192e5
 
 app.use(cors());
 
@@ -27,6 +17,7 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+var con = db.connection();
 
 app.use(function (req, res, next) {
 
@@ -55,8 +46,14 @@ app.get('/', (req, res) => {
 
 
 
-var con = db.connection();
-var userData;
+
+var userData ={
+  username : '',
+  password : '',
+  userId : '',
+  isAdmin : '',
+  name : ''
+}
 
 app.post('/users/signin', function (req, res) {
   const user = req.body.username;
@@ -69,7 +66,8 @@ app.post('/users/signin', function (req, res) {
     });
   }
   
-  con.connect( function(err){
+  
+  con.getConnection( function(err){
   if(err) throw err;
     console.log("connected...");
     const query = "select * from test.users where username= ? and password = ?";
@@ -78,7 +76,9 @@ app.post('/users/signin', function (req, res) {
          userData = result[0];
     });
   }); 
-  console.log(userData.username);
+  
+  
+  
   if (user !== userData.username || pwd !== userData.password) {
     console.log(userData.username);
     return res.status(401).json({
@@ -90,6 +90,8 @@ app.post('/users/signin', function (req, res) {
   const token = utils.generateToken(userData);
 
   const userObj = utils.getCleanUser(userData);
+
+  
 
   return res.json({ user: userObj, token });
 });
